@@ -75,7 +75,13 @@ module ActivePermission
             instance_variable_set "@#{name}", controller.instance_eval(&block)
           else
             objects = Array(resources).map {|resource| instance_variable_get("@#{resource.to_s}") }
-
+            unless current_permission.can?(controller.params[:controller], controller.params[:action], *objects)
+              if current_user.nil?
+                raise AccessDeniedForAnonymous.new("Access denied by #{@current_permission.class.name} to anonymous in #{controller.params[:controller]}::#{controller.params[:action]}")
+              else
+                raise AccessDenied.new("Access denied by #{@current_permission.class.name} to #{objects.inspect} in #{controller.params[:controller]}::#{controller.params[:action]}")
+              end
+            end
           end
         end
       end
