@@ -10,6 +10,4 @@ module ActivePermission
       @secure = secure
     end
   end
-  class AccessDeniedForAnonymous < AccessDenied; end
-  # Your code goes here...
 end

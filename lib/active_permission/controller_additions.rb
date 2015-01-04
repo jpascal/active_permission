@@ -4,42 +4,42 @@ module ActivePermission
       # Sets up a before filter which loads the model resource into an instance variable by name.
       #
       #   class BooksController < ApplicationController
-      #     resource :book
+      #     resource :book, object: 'Book'
       #   end
       #
       #   class BooksController < ApplicationController
-      #     authorize :book do
+      #     resource :book do
       #       Book.find(params[:id])
       #     end
       #   end
       #
       # Options:
       # [:+only+]
-      #   Work as before filter parameter
+      #   Work as before filter parameter.
       #
       # [:+except+]
-      #   Work as before filter parameter
+      #   Work as before filter parameter.
       #
       # [:+if+]
-      #   Work as before filter parameter
+      #   Work as before filter parameter.
       #
       # [:+unless+]
-      #   Work as before filter parameter
+      #   Work as before filter parameter.
       #
       # [:+object+]
-      #   Object used to fetch record (string, symbol or class)
+      #   Object used to fetch record (string, symbol or class).
       #
       # [:+through+]
       #   Load this resource through another one.
       #
       # [:+association+]
-      #   The name of the association to fetch the child records through the parent resource
+      #   The name of the association to fetch the child records through the parent resource.
       #
       # [:+key+]
-      #   The name of parameters from params
+      #   The name of parameters from params.
       #
       # [:+parent+]
-      #   Fetch first record from scope
+      #   Fetch first record from scope.
 
       def resource(name, options = {}, &block)
         send(:before_action, options.slice(:only, :except, :if, :unless)) do |controller|
@@ -47,10 +47,13 @@ module ActivePermission
             instance_variable_set "@#{name}", controller.instance_eval(&block)
           else
             if options[:through] and options[:association]
-              object = instance_variable_get("@#{options[:through].to_s}")
-              object = object.send(options[:association])
-            elsif [Symbol, String].include? options[:object].class
+              object = instance_variable_get("@#{options[:through]}").send(options[:association])
+            elsif options[:object].nil?
+              raise AccessDenied.new("Access denied in #{controller.params[:controller]}::#{controller.params[:action]}. Required set a option :object.")
+            elsif options[:object].kind_of? Symbol
               object = send(options[:object])
+            elsif options[:object].kind_of? String
+              object = options[:object].camelize.constantize
             else
               object = options[:object]
             end
@@ -69,33 +72,31 @@ module ActivePermission
         end
       end
 
-      def authorize(resources = nil, options = {}, &block)
+      def authorize(resources = nil, options = {})
         send(:before_action, options.slice(:only, :except, :if, :unless)) do |controller|
-          if block_given?
-            instance_variable_set "@#{name}", controller.instance_eval(&block)
-          else
-            objects = Array(resources).map {|resource| instance_variable_get("@#{resource.to_s}") }
-            unless current_permission.can?(controller.params[:controller], controller.params[:action], *objects)
-              if current_user.nil?
-                raise AccessDeniedForAnonymous.new("Access denied by #{@current_permission.class.name} to anonymous in #{controller.params[:controller]}::#{controller.params[:action]}")
-              else
-                raise AccessDenied.new("Access denied by #{@current_permission.class.name} to #{objects.inspect} in #{controller.params[:controller]}::#{controller.params[:action]}")
-              end
-            end
-          end
+          objects = Array(resources).map {|resource| instance_variable_get("@#{resource.to_s}") }
+          current_ability.can!(controller.params[:controller], controller.params[:action], *objects)
         end
       end
+      def current_ability
+        @ability ||= ActivePermission::Ability.new
+      end
     end
+
     def self.included(base)
       base.extend ClassMethods
-      base.delegate :can?, :can_any?, to: :current_permission
-      base.helper_method :can?, :can_any?
+      base.delegate :can?, :can!, to: :current_ability
+      base.helper_method :can?, :can!
+    end
+
+    def authorize!(resource, options = {})
+      options = params.merge(options)
+      current_ability.can!(options[:controller], options[:action], Array(resource))
+    end
+
+    def authorize(resource, options = {})
+      authorize!(resource, options)
     end
   end
 end
 
-if defined? ActionController::Base
-  ActionController::Base.class_eval do
-    include ActivePermission::ControllerAdditions
-  end
-end
