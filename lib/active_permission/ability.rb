@@ -29,7 +29,11 @@ module ActivePermission
       false
     end
     def can!(controllers, actions, *resource)
-      can?(controllers, actions, *resource) || raise ( AccessDenied.new("Access denied by #{self.class.name} to #{resource.inspect}") )
+      if can?(controllers, actions, *resource)
+        true
+      else 
+        raise AccessDenied.new("Access denied by #{self.class.name} to #{resource.inspect}")
+      end
     end
   end
 end
