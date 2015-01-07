@@ -51,12 +51,14 @@ end
 
 ```
 class BooksController < ApplicationController
+  resource :book, object: 'Book'
   authorize :book
 end
 ```
 
 ```
 class BooksController < ApplicationController
+  resource :book, object: 'Book', only: [ :show, :destroy ]
   def show
     @book = Book.find(params[:id])
     authorize! @book
