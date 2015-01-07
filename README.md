@@ -61,6 +61,14 @@ class BooksController < ApplicationController
     @book = Book.find(params[:id])
     authorize! @book
   end
+  def destroy
+    @book = Book.find(params[:id])
+    if authorize @book, :destroy
+      @book.destroy
+    else
+      flash[:warning] = 'Can't delete book'
+    end
+  end
 end
 ```
 
