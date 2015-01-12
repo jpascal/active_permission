@@ -85,15 +85,11 @@ module ActivePermission
 
     module  InstanceMethods
       def authorize!(resource, options = {})
-        puts "<"
-        puts resource.inspect
         options = params.merge(options)
         current_ability.can!(options[:controller], options[:action], resource)
       end
 
       def authorize?(resource, options = {})
-        puts "<"
-        puts resource.inspect
         options = params.merge(options)
         current_ability.can?(options[:controller], options[:action], resource)
       end
