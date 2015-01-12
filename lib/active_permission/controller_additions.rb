@@ -83,20 +83,29 @@ module ActivePermission
       end
     end
 
+    module  InstanceMethods
+      def authorize!(resource, options = {})
+        puts "<"
+        puts resource.inspect
+        options = params.merge(options)
+        current_ability.can!(options[:controller], options[:action], resource)
+      end
+
+      def authorize?(resource, options = {})
+        puts "<"
+        puts resource.inspect
+        options = params.merge(options)
+        current_ability.can?(options[:controller], options[:action], resource)
+      end
+    end
+
     def self.included(base)
       base.extend ClassMethods
+      base.include InstanceMethods
       base.delegate :can?, :can!, to: :current_ability
       base.helper_method :can?, :can!
     end
 
-    def authorize!(resource, options = {})
-      options = params.merge(options)
-      current_ability.can!(options[:controller], options[:action], Array(resource))
-    end
-
-    def authorize(resource, options = {})
-      authorize!(resource, options) rescue false
-    end
   end
 end
 
