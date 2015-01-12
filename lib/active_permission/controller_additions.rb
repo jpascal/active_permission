@@ -95,7 +95,7 @@ module ActivePermission
     end
 
     def authorize(resource, options = {})
-      authorize!(resource, options)
+      authorize!(resource, options) rescue false
     end
   end
 end
