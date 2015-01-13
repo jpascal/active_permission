@@ -1,6 +1,6 @@
 require 'active_permission/version'
 require 'active_permission/controller_additions'
-require 'active_permission/ability'
+require 'active_permission/base'
 
 module ActivePermission
   class AccessDenied < RuntimeError

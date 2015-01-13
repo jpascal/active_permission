@@ -75,10 +75,10 @@ module ActivePermission
       def authorize(resources = nil, options = {})
         send(:before_action, options.slice(:only, :except, :if, :unless)) do |controller|
           objects = Array(resources).map {|resource| instance_variable_get("@#{resource.to_s}") }
-          current_ability.can!(controller.params[:controller], controller.params[:action], *objects)
+          current_permissions.can!(controller.params[:controller], controller.params[:action], *objects)
         end
       end
-      def current_ability
+      def current_permissions
         @ability ||= ActivePermission::Ability.new
       end
     end
@@ -86,19 +86,19 @@ module ActivePermission
     module  InstanceMethods
       def authorize!(resource, options = {})
         options = params.merge(options)
-        current_ability.can!(options[:controller], options[:action], resource)
+        current_permissions.can!(options[:controller], options[:action], resource)
       end
 
       def authorize?(resource, options = {})
         options = params.merge(options)
-        current_ability.can?(options[:controller], options[:action], resource)
+        current_permissions.can?(options[:controller], options[:action], resource)
       end
     end
 
     def self.included(base)
       base.extend ClassMethods
       base.include InstanceMethods
-      base.delegate :can?, :can!, to: :current_ability
+      base.delegate :can?, :can!, to: :current_permissions
       base.helper_method :can?, :can!
     end
 

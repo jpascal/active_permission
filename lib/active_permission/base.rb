@@ -1,5 +1,5 @@
 module ActivePermission
-  #   class UserPermission < ActivePermission::Ability
+  #   class UserPermission < ActivePermission::Base
   #     def initialize(user)
   #       if user.admin?
   #         can 'manage/root', :index
@@ -8,7 +8,7 @@ module ActivePermission
   #       end
   #     end
   #   end
-  class Ability
+  class Base
     def can(controllers, actions, &block)
       @allowed_actions ||= {}
       Array(controllers).each do |controller|
