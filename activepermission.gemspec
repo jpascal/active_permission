@@ -9,11 +9,9 @@ Gem::Specification.new do |spec|
   spec.platform      = Gem::Platform::RUBY
   spec.authors       = ['Evgeniy Shurmin']
   spec.email         = ['eshurmin@gmail.com']
-  spec.summary       = %q{Gem contain utility to allow/deny methods}
-  # spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = %q{This gem allow you load and authorize resource in Ruby on Rails inside controllers or views using rules with described permissions of user.}
   spec.homepage      = 'http://github.com/jpascal/active_permission'
   spec.license       = 'MIT'
-
   spec.files         = `git ls-files -z`.split("\x0")
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})

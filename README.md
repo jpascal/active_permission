@@ -1,6 +1,6 @@
 # ActivePermission
 
-This gem allow you load and authorize resource in Ruby on Rails inside controllers or views using Ability class with described permissions of user.
+This gem allow you load and authorize resource in Ruby on Rails inside controllers or views using rules with described permissions of user.
 
 ## Installation
 
