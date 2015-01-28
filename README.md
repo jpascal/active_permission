@@ -27,11 +27,18 @@ Add a new class in `app/models/permissions.rb` with the following contents:
 ```
 class Permissions < ActivePermission::Base
   def initialize(user = nil)
+    can 'books', 'index'
+    can 'books, 'show' do |catalog, book|
+      catalog.published? and book.published?
+    end
+    can 'books, ['edit','update','destroy'] do |book|
+      book.author == user
+    end
   end
 end
 ```
 
-### Load Resource
+### Load Resource and authorization examples
 
 ```
 class BooksController < ApplicationController
@@ -47,12 +54,12 @@ class BooksController < ApplicationController
 end
 ```
 
-### Authorization
-
 ```
 class BooksController < ApplicationController
-  resource :book, object: 'Book'
-  authorize :book
+  resource :catalog, object: 'Catalog', key: :catalog_id, parent: true
+  resource :book, through: :catalog, association: :books
+  authorize :catalog, :book, only: :show
+  authorize :book, only: [ :edit, :update, :destroy ]
 end
 ```
 

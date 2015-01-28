@@ -59,12 +59,12 @@ module ActivePermission
             end
 
             if options[:parent]
-              object = object.where(id: controller.params[(options[:key] || :id).to_sym]).first!
+              object = object.where(:id => controller.params[(options[:key] || :id).to_sym]).first!
             else
               if controller.params[:action].to_sym == :new
                 object = object.new
               elsif not [:create, :index].include?(controller.params[:action].to_sym)
-                object = object.where(id: controller.params[(options[:key] || :id).to_sym]).first!
+                object = object.where(:id => controller.params[(options[:key] || :id).to_sym]).first!
               end
             end
             instance_variable_set "@#{name}", object
@@ -78,8 +78,9 @@ module ActivePermission
           current_permissions.can!(controller.params[:controller], controller.params[:action], *objects)
         end
       end
+      
       def current_permissions
-        @ability ||= ActivePermission::Ability.new
+        @permissions ||= ActivePermission::Base.new
       end
     end
 
@@ -98,7 +99,7 @@ module ActivePermission
     def self.included(base)
       base.extend ClassMethods
       base.include InstanceMethods
-      base.delegate :can?, :can!, to: :current_permissions
+      base.delegate :can?, :can!, :to => :current_permissions
       base.helper_method :can?, :can!
     end
 
