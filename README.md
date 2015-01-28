@@ -1,5 +1,7 @@
 # ActivePermission
 
+[![Gem Version](https://badge.fury.io/rb/active_permission.svg)](http://badge.fury.io/rb/active_permission)
+
 This gem allow you load and authorize resource in Ruby on Rails inside controllers or views using rules with described permissions of user.
 
 ## Installation
