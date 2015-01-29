@@ -43,6 +43,19 @@ end
 ### Load Resource and authorization examples
 
 ```
+class ApplicationController < ActionController::Base
+  include ActivePermission::ControllerAdditions
+private
+  def current_user
+    @current_user ||= User.find(session[:user_id]) if session[:user_id]
+  end
+  def current_permissions
+    @permission ||= Permission.new(current_user)
+  end
+end
+```
+
+```
 class BooksController < ApplicationController
   resource :book, object: 'Book'
 end
