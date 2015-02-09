@@ -49,7 +49,7 @@ module ActivePermission
             if options[:through] and options[:association]
               object = instance_variable_get("@#{options[:through]}").send(options[:association])
             elsif options[:object].nil?
-              raise AccessDenied.new("Access denied in #{controller.params[:controller]}::#{controller.params[:action]}. Required set a option :object.")
+              raise AccessDenied.new(controller.params[:controller], controller.params[:action], object)
             elsif options[:object].kind_of? Symbol
               object = send(options[:object])
             elsif options[:object].kind_of? String
@@ -78,27 +78,27 @@ module ActivePermission
           current_permissions.can!(controller.params[:controller], controller.params[:action], *objects)
         end
       end
-      
+
       def current_permissions
         @permissions ||= ActivePermission::Base.new
       end
     end
 
     module  InstanceMethods
-      def authorize!(resource, options = {})
+      def authorize!(resource = nil, options = {})
         options = params.merge(options)
         current_permissions.can!(options[:controller], options[:action], resource)
       end
 
-      def authorize?(resource, options = {})
+      def authorize?(resource = nil, options = {})
         options = params.merge(options)
         current_permissions.can?(options[:controller], options[:action], resource)
       end
     end
 
     def self.included(base)
-      base.extend ClassMethods
-      base.include InstanceMethods
+      base.send :extend, ClassMethods
+      base.send :include, InstanceMethods
       base.delegate :can?, :can!, :to => :current_permissions
       base.helper_method :can?, :can!
     end

@@ -110,6 +110,30 @@ end
 <% end %>
 ```
 
+### Rescue from ActivePermission::AccessDenied
+
+```
+  rescue_from ActivePermission::AccessDenied do |error|
+    if @current_user
+      logger.warn "#{@current_user.class}(#{@current_user.id}): #{error}"
+      flash[:warning] = t('Access denied')
+      redirect_to root_path
+    else
+      logger.warn "Anonymous: #{error}"
+      flash[:warning] = t('Must be signin')
+      redirect_to signin_path
+    end
+  end
+```
+
+```
+  rescue_from ActivePermission::AccessDenied do |error|
+    logger.warn "Controller: #{error.controller} Action: #{error.action} Object: #{error.object}"
+    flash[:warning] = t('Access denied')
+    redirect_to root_path
+  end
+```
+
 
 ## Contributing
 
