@@ -128,7 +128,15 @@ end
 
 ```
   rescue_from ActivePermission::AccessDenied do |error|
-    logger.warn "Controller: #{error.controller} Action: #{error.action} Object: #{error.object}"
+    logger.warn "Controller: #{error.controller} Action: #{error.action} Object: #{error.resources}"
+    flash[:warning] = t('Access denied')
+    redirect_to root_path
+  end
+```
+
+```
+  rescue_from ActivePermission::AccessDenied do |error|
+    logger.warn error.to_s
     flash[:warning] = t('Access denied')
     redirect_to root_path
   end
