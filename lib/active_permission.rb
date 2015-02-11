@@ -4,12 +4,16 @@ require 'active_permission/base'
 
 module ActivePermission
   class AccessDenied < RuntimeError
-    attr_reader :controller, :action, :object
-    def initialize(controller = nil , action = nil , object = nil)
+    attr_reader :controller, :action, :resources
+    def initialize(controller = nil , action = nil , resources = nil)
       @controller = controller
       @action = action
-      @object = object
-      super("Access denied in #{@controller}::#{@action} - #{object.inspect}")
+      @resources = resources
+      message = "Access denied in #{@controller}::#{@action}"
+      if resources
+        message += ' on resources ' + resources.collect{|resource| resource.respond_to?(:id) ? "#{resource.class}(#{resource.id})}" : resource}.to_s
+      end
+      super(message)
     end
   end
 end

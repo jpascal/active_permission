@@ -17,23 +17,25 @@ module ActivePermission
         end
       end
     end
-    def can?(controllers, actions, *resource)
+    def can!(controllers, actions, *resource)
       @allowed_actions ||= {}
       Array(controllers).each do |controller|
         Array(actions).each do |action|
           allowed = @allowed_actions[[controller.to_s, action.to_s]]
           result = allowed && (allowed == true || resource && allowed.call(*resource))
-          return result if result == true
+          if result == true
+            return result  
+          else
+            raise AccessDenied.new(controller, action, resource)
+          end
         end
       end
       false
     end
-    def can!(controllers, actions, *resource)
-      if can?(controllers, actions, *resource)
-        true
-      else
-        raise AccessDenied.new("Access denied by #{self.class.name} to #{resource.inspect}")
-      end
+    def can?(controllers, actions, *resource)
+       can!(controllers, actions, *resource)
+    rescue
+      false
     end
   end
 end
