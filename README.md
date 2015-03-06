@@ -9,7 +9,7 @@ This gem allow you load and authorize resource in Ruby on Rails inside controlle
 Add this line to your application's Gemfile:
 
 ```
-gem 'activepermission'
+gem 'active_permission'
 ```
 
 And then execute:
@@ -18,7 +18,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install activepermission
+    $ gem install active_permission
 
 ## Usage
 
@@ -145,7 +145,7 @@ end
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/activepermission/fork )
+1. Fork it ( https://github.com/jpascal/active_permission/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
