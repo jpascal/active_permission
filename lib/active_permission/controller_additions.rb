@@ -49,7 +49,7 @@ module ActivePermission
             if options[:through] and options[:association]
               object = instance_variable_get("@#{options[:through]}").send(options[:association])
             elsif options[:object].nil?
-              raise AccessDenied.new(controller.params[:controller], controller.params[:action], object)
+              raise MissingParameter.new('Please add parameter :object to resource')
             elsif options[:object].kind_of? Symbol
               object = send(options[:object])
             elsif options[:object].kind_of? String

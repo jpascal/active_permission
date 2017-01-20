@@ -3,6 +3,7 @@ require 'active_permission/controller_additions'
 require 'active_permission/base'
 
 module ActivePermission
+  class MissingParameter < RuntimeError ; end
   class AccessDenied < RuntimeError
     attr_reader :controller, :action, :resources
     def initialize(controller = nil , action = nil , resources = nil)
