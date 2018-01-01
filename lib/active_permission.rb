@@ -12,7 +12,7 @@ module ActivePermission
       @resources = resources
       message = "Access denied in #{@controller}::#{@action}"
       if resources
-        message += ' on resources ' + resources.collect{|resource| resource.respond_to?(:id) ? "#{resource.class}(#{resource.id})}" : resource}.to_s
+        message += ' on resources ' + resources.collect{|resource| resource.respond_to?(:id) ? "#{resource.class}(#{resource.id})" : resource}.to_s
       end
       super(message)
     end

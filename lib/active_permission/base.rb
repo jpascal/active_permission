@@ -34,7 +34,7 @@ module ActivePermission
     end
     def can?(controllers, actions, *resource)
        can!(controllers, actions, *resource)
-    rescue
+    rescue AccessDenied
       false
     end
   end
